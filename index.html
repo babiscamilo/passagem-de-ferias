@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Passagem de Férias — PsicoMaster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#1d2328;--muted:#5a6470;--line:#d4d8dc;--head:#1f3b40;--soft:#e7f1fb;--bg:#f6f4f0;--accent:#2f6670;--warm:#ecaa3c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5}
+.top{background:var(--head);color:#fff}
+.top .in{max-width:760px;margin:0 auto;padding:14px 16px 12px}
+.top .row{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:15px}
+.st{font-size:12px;opacity:.85}
+.prog{height:6px;background:rgba(255,255,255,.18);border-radius:99px;margin-top:10px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--warm);border-radius:99px;transition:width .3s}
+.steps{font-size:12px;margin-top:6px;opacity:.9}
+.wrap{max-width:760px;margin:0 auto;padding:24px 16px 120px}
+h1{font-size:26px;margin:0 0 6px;letter-spacing:-.01em}
+.help{color:var(--muted);margin:0 0 18px}
+.tip{background:#fff;border-left:4px solid var(--warm);border-radius:8px;padding:12px 14px;margin:0 0 18px;font-size:14px}
+.badge{display:inline-block;font-size:12px;font-weight:700;background:#f9eeda;color:#7a4b00;border-radius:99px;padding:3px 10px;margin-bottom:10px}
+.card{background:#fff;border:1.5px solid #2b333b;border-radius:12px;padding:16px;margin:0 0 14px}
+.card .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.card .ch b{font-size:14px;color:var(--accent)}
+label{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+label:first-of-type{margin-top:0}
+label small{display:block;font-weight:400;color:var(--muted);font-size:12.5px}
+textarea,input{width:100%;font:inherit;font-size:15px;color:var(--ink);background:#fbfbfa;border:1.5px solid var(--line);border-radius:8px;padding:10px 12px;resize:none;overflow:hidden;min-height:44px;display:block}
+textarea:focus,input:focus{outline:none;border-color:var(--accent);background:#fff}
+::placeholder{color:#a3aab1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+button{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:10px 16px;cursor:pointer;border:1.5px solid var(--head);background:#fff;color:var(--head)}
+button.pri{background:var(--head);color:#fff}
+button.add{width:100%;border-style:dashed;background:transparent;padding:12px}
+button.link{border:none;background:none;color:#9aa1a8;padding:4px 6px;font-weight:500;font-size:13px}
+button.link:hover{color:#b42318}
+.nav{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line)}
+.nav .in{max-width:760px;margin:0 auto;padding:12px 16px;display:flex;gap:8px;align-items:center}
+.nav .sp{flex:1}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px;padding-top:16px;border-top:1px solid var(--line)}
+.tools button{font-size:13px;padding:8px 12px}
+/* revisão / impresso */
+.doc h2{font-size:16px;margin:22px 0 8px;padding-bottom:4px;border-bottom:2px solid var(--head)}
+.doc .item{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 8px;background:#fff;break-inside:avoid}
+.doc .kv{margin:2px 0}
+.doc .kv b{font-weight:600}
+.doc .empty{color:#9aa1a8;font-style:italic}
+.doc .ident{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 14px}
+@media (max-width:600px){.grid2,.doc .ident{grid-template-columns:1fr}}
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff;font-size:12px}
+  .top,.nav,.tools,.noprint{display:none!important}
+  .wrap{padding:0;max-width:none}
+  .doc .item{border-color:#bbb}
+  .doc h2{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div class="top"><div class="in">
+  <div class="row"><span class="brand">Passagem de Férias · PsicoMaster</span><span class="st" id="st">Salvo automaticamente neste computador</span></div>
+  <div class="prog"><i id="bar"></i></div>
+  <div class="steps" id="stepTxt"></div>
+</div></div>
+<div class="wrap" id="app"></div>
+<div class="nav"><div class="in">
+  <button id="bBack">← Voltar</button><span class="sp"></span><button class="pri" id="bNext">Próximo →</button>
+</div></div>
+<input type="file" id="fOpen" accept=".json" style="display:none">
+
+<script>
+const STEPS = [
+  { id:'ident', title:'Vamos começar', kind:'ident',
+    help:'Este formulário garante que o seu trabalho continue bem feito enquanto você descansa, sem que ninguém precise te procurar nas férias.',
+    tip:'Responda com calma e com o máximo de detalhes. Pense que a pessoa que vai te cobrir nunca fez essas tarefas. Tudo é salvo sozinho neste computador: pode parar e continuar depois. Não use aba anônima.' },
+  { id:'agendas', title:'Agendas que você cuida', kind:'cards', noun:'profissional',
+    help:'Uma ficha para cada profissional cuja agenda você cuida.',
+    fields:[
+      ['nome','Profissional','Ex.: Dr. Fulano'],
+      ['dias','Em que dias e horários atende?','Ex.: segundas e quartas, das 8h às 12h'],
+      ['faz','O que você faz nessa agenda?','Ex.: confirmo as consultas do dia seguinte, faço encaixes, remarco quando ele pede', 'Confirmação, encaixes, remarcações, avisos…'],
+      ['part','O que é importante saber sobre esse profissional?','Ex.: não aceita encaixe depois das 11h; prefere ser avisado pelo WhatsApp', 'Preferências, regras, coisas que ele pede']
+    ]},
+  { id:'diaria', title:'Sua rotina de todos os dias', kind:'cards', noun:'tarefa',
+    help:'Uma ficha para cada tarefa que você faz todos os dias. Explique como se a pessoa nunca tivesse feito.',
+    fields:[
+      ['tarefa','Qual é a tarefa?','Ex.: confirmar as consultas do dia seguinte'],
+      ['como','Como fazer, passo a passo','1. Abrir o sistema…\n2. …\n3. …'],
+      ['onde','Onde isso é feito?','Ex.: sistema, planilha, WhatsApp da clínica']
+    ]},
+  { id:'semanal', title:'Tarefas com data certa', kind:'cards', noun:'tarefa',
+    help:'Tarefas que você não faz todo dia, mas que têm dia certo (uma vez por semana, por mês ou com prazo). Coloque só as que vão cair durante as suas férias.',
+    fields:[
+      ['tarefa','Qual é a tarefa?','Ex.: enviar o relatório mensal'],
+      ['quando','Quando precisa ser feita?','Ex.: toda sexta / até o dia 10'],
+      ['como','Como fazer, passo a passo','1. …\n2. …'],
+      ['onde','Onde isso é feito?','Ex.: sistema, planilha, e-mail']
+    ]},
+  { id:'atencao', title:'Situações que pedem cuidado', kind:'cards', noun:'situação',
+    help:'Pacientes, profissionais ou casos que precisam de atenção especial. Identifique o paciente como aparece no sistema.',
+    fields:[
+      ['quem','Quem ou o quê?','Ex.: paciente que sempre remarca em cima da hora'],
+      ['atencao','O que precisa de atenção?',''],
+      ['lidar','Como lidar?','']
+    ]},
+  { id:'psico', title:'Psicologia', kind:'cards+qa', noun:'psicólogo(a)', optional:'Se você não cuida da psicologia, pode pular este passo.',
+    help:'Uma ficha para cada psicólogo(a) e, depois, algumas perguntas gerais.',
+    fields:[
+      ['nome','Psicólogo(a)',''],
+      ['regras','Regras de agendamento','Ex.: sessão de 50 min, intervalo de 10, no máximo 8 por dia'],
+      ['conv','Convênios e particular','Ex.: atende Unimed e particular'],
+      ['obs','Observações','']
+    ],
+    qs:[
+      ['rec','Sessões recorrentes (pacientes fixos semanais): como são marcadas e confirmadas?'],
+      ['guias','Guias e autorizações de convênio: quais estão pendentes e qual o passo a passo para pedir?'],
+      ['faltas','Faltas e desmarcações: qual é a regra com cada psicólogo(a)?'],
+      ['avisos','Como os psicólogos preferem ser avisados (WhatsApp, sistema, pessoalmente)?'],
+      ['outras','Outras orientações importantes']
+    ]},
+  { id:'fat', title:'Conferência de guias', kind:'qa', optional:'Se você não ajuda no faturamento, pode pular este passo.',
+    help:'Responda só se você ajuda na conferência de guias.',
+    qs:[
+      ['como','Como você confere as guias?','Passo a passo: o que você olha em cada guia'],
+      ['onde','Onde ficam as guias conferidas e as que faltam conferir?','']
+    ]},
+  { id:'mais', title:'Mais alguma coisa?', kind:'qa',
+    help:'Último passo! Escreva qualquer coisa que a pessoa que vai te cobrir precisa saber e que não apareceu antes.',
+    qs:[['texto','O que mais a pessoa precisa saber?','Dicas, contatos, cuidados…']] },
+  { id:'rev', title:'Revisão', kind:'review',
+    help:'Confira se está tudo certo. Para corrigir, volte ao passo. Quando terminar, clique em "Imprimir / salvar PDF" e entregue à gerência.' }
+];
+
+const PEND = { id:'pend', title:'Pendências em andamento', kind:'cards', noun:'pendência', later:true,
+    help:'Tudo que vai ficar em aberto quando você sair. Esta é uma entrega separada, feita no seu último dia de trabalho antes das férias.',
+    fields:[
+      ['oque','O que é?','Ex.: remarcação dos pacientes do Dr. Fulano'],
+      ['sit','Como está agora?','Ex.: faltam 3 pacientes para avisar'],
+      ['prox','Qual é o próximo passo?','Ex.: ligar para eles até quinta'],
+      ['prazo','Prazo','Ex.: 08/01']
+    ]};
+const PFLOW = [PEND, { id:'rev', title:'Revisão das pendências', kind:'review', help:'Confira as pendências. Quando terminar, clique em "Imprimir / salvar PDF" e entregue à gerência junto com a passagem de férias.' }];
+let mode = location.hash==='#pendencias' ? 'pend' : 'main';
+const F = () => mode==='pend' ? PFLOW : STEPS;
+window.addEventListener('hashchange',()=>{mode=location.hash==='#pendencias'?'pend':'main';step=mode==='pend'?stepP:stepM;render();});
+const KEY='passagem-ferias-v2';
+let data={}, step=0, stepM=0, stepP=0;
+try{const s=JSON.parse(localStorage.getItem(KEY)||'{}');data=s.data||{};stepM=s.step||0;stepP=s.stepP||0;}catch(e){}
+step=mode==='pend'?stepP:stepM;
+const $=id=>document.getElementById(id);
+let tm;
+function save(){try{(mode==='pend'?stepP=step:stepM=step),localStorage.setItem(KEY,JSON.stringify({data,step:stepM,stepP}));$('st').textContent='Salvo neste computador às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch(e){$('st').textContent='Não foi possível salvar aqui. Use "Baixar rascunho".';}}
+function queue(){clearTimeout(tm);tm=setTimeout(save,300);}
+function grow(e){e.style.height='auto';e.style.height=e.scrollHeight+'px';}
+function h(tag,attrs,...kids){const e=document.createElement(tag);for(const k in (attrs||{})){if(k==='html')e.innerHTML=attrs[k];else if(k.startsWith('on'))e[k]=attrs[k];else e.setAttribute(k,attrs[k]);}kids.flat().forEach(k=>k!=null&&e.append(k));return e;}
+const esc=s=>String(s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+function input(get,set,ph){const t=h('textarea',{rows:1,placeholder:ph||''});t.value=get()||'';t.oninput=()=>{set(t.value);grow(t);queue();};requestAnimationFrame(()=>grow(t));return t;}
+function lab(text,sub){return h('label',{html:esc(text)+(sub?'<small>'+esc(sub)+'</small>':'')});}
+
+function cards(s){
+  if(!Array.isArray(data[s.id])||!data[s.id].length)data[s.id]=[{}];
+  const box=h('div');
+  const draw=()=>{box.innerHTML='';data[s.id].forEach((it,i)=>{
+    const c=h('div',{class:'card'});
+    const del=h('button',{class:'link',onclick:()=>{if(Object.values(it).some(Boolean)&&!confirm('Apagar esta ficha?'))return;data[s.id].splice(i,1);if(!data[s.id].length)data[s.id].push({});draw();queue();}},'apagar');
+    c.append(h('div',{class:'ch'},h('b',null,s.noun.charAt(0).toUpperCase()+s.noun.slice(1)+' '+(i+1)),del));
+    s.fields.forEach(([k,l,ph,sub])=>{c.append(lab(l,sub),input(()=>it[k],v=>it[k]=v,ph));});
+    box.append(c);});
+    box.append(h('button',{class:'add',onclick:()=>{data[s.id].push({});draw();queue();box.querySelectorAll('.card')[data[s.id].length-1].querySelector('textarea').focus();}},'+ Adicionar '+(s.noun.endsWith('a')||s.noun==='situação'||s.noun==='tarefa'||s.noun==='pendência'?'outra ':'outro ')+s.noun));};
+  draw();return box;
+}
+function qa(s){
+  data[s.id]=data[s.id]||{};const d=data[s.id];
+  const c=h('div',{class:'card'});
+  s.qs.forEach(([k,l,ph])=>c.append(lab(l),input(()=>d[k],v=>d[k]=v,ph)));
+  return c;
+}
+function ident(){
+  data.ident=data.ident||{};const d=data.ident;
+  const c=h('div',{class:'card'});
+  c.append(lab('Seu nome'),input(()=>d.nome,v=>d.nome=v));
+  c.append(lab('Sua função'),input(()=>d.funcao,v=>d.funcao=v,'Ex.: recepcionista'));
+  const g=h('div',{class:'grid2'});
+  const a=h('div',null,lab('Férias: primeiro dia'),input(()=>d.de,v=>d.de=v,'dd/mm'));
+  const b=h('div',null,lab('Último dia'),input(()=>d.ate,v=>d.ate=v,'dd/mm'));
+  g.append(a,b);c.append(g);
+  c.append(lab('Data de retorno'),input(()=>d.volta,v=>d.volta=v,'dd/mm'));
+  return c;
+}
+
+function review(){
+  const doc=h('div',{class:'doc'});
+  const d=data.ident||{};
+  doc.append(h('h2',null,'Identificação'));
+  doc.append(h('div',{class:'item ident',html:
+    kv('Nome',d.nome)+kv('Função',d.funcao)+kv('Férias',(d.de||'___')+' a '+(d.ate||'___'))+kv('Retorno',d.volta)+(mode==='pend'?'':kv('Quem vai cobrir',''))}));
+  (mode==='pend'?[PEND]:STEPS.slice(1,-1)).forEach(s=>{
+    doc.append(h('h2',null,s.title));
+    let any=false;
+    if(s.fields){(data[s.id]||[]).forEach(it=>{if(!Object.values(it).some(Boolean))return;any=true;doc.append(h('div',{class:'item',html:s.fields.map(([k,l])=>kv(l,it[k])).join('')}));});}
+    if(s.qs){const q=data[s.id]||{};const html=s.qs.filter(([k])=>q[k]).map(([k,l])=>kv(l,q[k])).join('');if(html){any=true;doc.append(h('div',{class:'item',html}));}}
+    if(!any)doc.append(h('div',{class:'item empty'},'Não preenchido.'));
+  });
+  doc.append(h('h2',null,'Entrega'));
+  doc.append(h('div',{class:'item',html:kv('Preenchido por',d.nome)+kv('Data',new Date().toLocaleDateString('pt-BR'))}));
+  return doc;
+}
+function kv(l,v){return '<div class="kv"><b>'+esc(l)+(/[?:]$/.test(l)?'':':')+'</b> '+(v?esc(v).replace(/\n/g,'<br>'):(v===''?'':'<span class="empty">—</span>'))+'</div>';}
+
+function render(){
+  const S=F(),s=S[step]||S[0],app=$('app');app.innerHTML='';
+  $('bar').style.width=(S.length>1?step/(S.length-1)*100:100)+'%';
+  $('stepTxt').textContent=mode==='pend'?(step===0?'Pendências · último dia antes das férias':'Pronto para entregar'):(step<S.length-1?'Passo '+(step+1)+' de '+(S.length-1):'Pronto para entregar');
+  if(s.later)app.append(h('span',{class:'badge'},'Preencher no último dia antes das férias'));
+  app.append(h('h1',null,s.title),h('p',{class:'help'},s.help));
+  if(s.tip)app.append(h('div',{class:'tip'},s.tip));
+  if(s.optional)app.append(h('div',{class:'tip noprint'},s.optional));
+  if(s.kind==='ident')app.append(ident());
+  if(mode==='pend'&&s.kind==='cards'){data.ident=data.ident||{};const c=h('div',{class:'card'});c.append(lab('Seu nome'),input(()=>data.ident.nome,v=>data.ident.nome=v));app.append(c);}
+  if(s.kind==='cards')app.append(cards(s));
+  if(s.kind==='cards+qa'){app.append(cards(s));app.append(h('h1',{style:'font-size:18px;margin:22px 0 10px'},'Perguntas gerais'));app.append(qa(s));}
+  if(s.kind==='qa')app.append(qa(s));
+  if(s.kind==='review')app.append(review());
+  app.append(h('div',{class:'tools'},
+    h('button',{onclick:dl},'Baixar rascunho'),
+    h('button',{onclick:()=>$('fOpen').click()},'Abrir rascunho'),
+    s.kind==='review'?null:h('button',{onclick:()=>go(S.length-1)},'Ir para a revisão'),
+    mode==='pend'?h('button',{onclick:()=>{location.hash='';}},'← Voltar à passagem de férias'):h('button',{onclick:()=>{location.hash='pendencias';}},'Pendências (último dia) →')));
+  $('bBack').style.visibility=step?'visible':'hidden';
+  $('bNext').textContent=s.kind==='review'?'Imprimir / salvar PDF':(step===S.length-2?'Revisar →':'Próximo →');
+  window.scrollTo(0,0);
+}
+function go(n){step=Math.max(0,Math.min(F().length-1,n));save();render();}
+$('bBack').onclick=()=>go(step-1);
+$('bNext').onclick=()=>{if(F()[step].kind==='review')window.print();else go(step+1);};
+function dl(){const n=((data.ident&&data.ident.nome)||'rascunho').trim().replace(/\s+/g,'-');const a=h('a',{href:URL.createObjectURL(new Blob([JSON.stringify({data,step},null,2)],{type:'application/json'})),download:'passagem-de-ferias-'+n+'.json'});a.click();}
+$('fOpen').onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);if(confirm('Substituir o que está preenchido agora pelo rascunho aberto?')){data=s.data||s;stepM=s.step||0;stepP=s.stepP||0;step=mode==='pend'?stepP:stepM;save();render();}}catch(err){alert('Esse arquivo não é um rascunho válido.');}e.target.value='';};r.readAsText(f);};
+render();
+</script>
+</body>
+</html>
